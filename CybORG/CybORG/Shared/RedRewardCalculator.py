@@ -85,7 +85,7 @@ class DistruptRewardCalculator(RewardCalculator):
         self.impacted_hosts = {}
         # currently a single 1 reward is recieved if the Impact action is successful
         # TODO: Add in test to see what required services are up
-        agent_action = action[self.agent_name]
+        # agent_action = action[self.agent_name]
         disrupted = []
         if self.ots is None:
             self.ots = []
@@ -120,6 +120,7 @@ class HybridImpactPwnRewardCalculator(RewardCalculator):
     # Hybrid of availability and confidentiality reward calculator
     def __init__(self, agent_name: str, scenario: Scenario):
         super(HybridImpactPwnRewardCalculator, self).__init__(agent_name)
+        # print(agent_name)
         self.pwn_calculator = PwnRewardCalculator(agent_name, scenario)
         self.disrupt_calculator = DistruptRewardCalculator(agent_name, scenario)
         self.host_scores = {}

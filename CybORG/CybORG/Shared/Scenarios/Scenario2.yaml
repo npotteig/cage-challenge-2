@@ -58,7 +58,7 @@ Agents:
           Interfaces: All
           System info: All
           User info: All
-    adversary: Red
+    adversary: Red, Red2
     actions:
       - Sleep
       - Monitor
@@ -251,6 +251,39 @@ Agents:
       username: GreenAgent
     wrappers: []
   Red:
+    AllowedSubnets:
+      - User
+      - Enterprise
+      - Operational
+    INT:
+      Hosts:
+        User0:
+          Interfaces: All
+          System info: All
+    actions:
+    - Sleep
+    - DiscoverRemoteSystems
+    - DiscoverNetworkServices
+    - ExploitRemoteService
+    - BlueKeep
+    - EternalBlue
+    - FTPDirectoryTraversal
+    - HarakaRCE
+    - HTTPRFI
+    - HTTPSRFI
+    - SQLInjection
+    - PrivilegeEscalate
+    - Impact
+    - SSHBruteForce
+    agent_type: SleepAgent
+    reward_calculator_type: HybridImpactPwn
+    starting_sessions:
+    - hostname: User0
+      name: RedPhish
+      type: RedAbstractSession
+      username: SYSTEM
+    wrappers: []
+  Red2:
     AllowedSubnets:
       - User
       - Enterprise

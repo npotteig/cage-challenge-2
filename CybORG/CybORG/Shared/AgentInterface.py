@@ -53,7 +53,10 @@ class AgentInterface:
         )
         self.agent_name = agent_name
         self.action_space = ActionSpace(self.actions, agent_name, allowed_subnets)
-        self.agent = agent_class()
+        if 'Red' in agent_name:
+            self.agent = agent_class(name=agent_name)
+        else:
+            self.agent = agent_class()
         if wrappers is not None:
             for wrapper in wrappers:
                 if wrapper != 'None':

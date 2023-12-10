@@ -3,12 +3,12 @@ import random
 from CybORG.Agents.SimpleAgents.BaseAgent import BaseAgent
 from CybORG.Shared import Results
 from CybORG.Shared.Actions import PrivilegeEscalate, ExploitRemoteService, DiscoverRemoteSystems, Impact, \
-    DiscoverNetworkServices
+    DiscoverNetworkServices, Sleep
 
 
 class RedMeanderAgent(BaseAgent):
     # a red agent that meanders through scenario 1b
-    def __init__(self):
+    def __init__(self, name='Red'):
         self.scanned_subnets = []
         self.scanned_ips = []
         self.exploited_ips = []
@@ -16,6 +16,10 @@ class RedMeanderAgent(BaseAgent):
         self.host_ip_map = {}
         self.last_host = None
         self.last_ip = None
+        
+        self.name = name
+        
+        self.steps = 0
 
     def train(self, results: Results):
         """allows an agent to learn a policy"""
@@ -23,6 +27,11 @@ class RedMeanderAgent(BaseAgent):
 
     def get_action(self, observation, action_space):
         """gets an action from the agent that should be performed based on the agent's internal state and provided observation and action space"""
+        self.steps += 1
+        if self.steps >= 50:
+            return Sleep()
+        
+        
         self._process_success(observation)
 
         session = list(action_space['session'].keys())[0]
@@ -30,14 +39,14 @@ class RedMeanderAgent(BaseAgent):
         # Always impact if able
         if 'Op_Server0' in self.escalated_hosts:
             self.last_host = 'Op_Server0'
-            return Impact(agent='Red', hostname='Op_Server0', session=session)
+            return Impact(agent=self.name, hostname='Op_Server0', session=session)
 
         # start by scanning
         for subnet in action_space["subnet"]:
             if not action_space["subnet"][subnet] or subnet in self.scanned_subnets:
                 continue
             self.scanned_subnets.append(subnet)
-            return DiscoverRemoteSystems(subnet=subnet, agent='Red', session=session)
+            return DiscoverRemoteSystems(subnet=subnet, agent=self.name, session=session)
         # discover network services
         # # act on ip addresses discovered in first subnet
         addresses = [i for i in action_space["ip_address"]]
@@ -47,7 +56,7 @@ class RedMeanderAgent(BaseAgent):
                 continue
             self.scanned_ips.append(address)
 
-            return DiscoverNetworkServices(ip_address=address, agent='Red', session=session)
+            return DiscoverNetworkServices(ip_address=address, agent=self.name, session=session)
         # priv esc on owned hosts
         hostnames = [x for x in action_space['hostname'].keys()]
         random.shuffle(hostnames)
@@ -63,7 +72,7 @@ class RedMeanderAgent(BaseAgent):
                 continue
             self.escalated_hosts.append(hostname)
             self.last_host = hostname
-            return PrivilegeEscalate(hostname=hostname, agent='Red', session=session)
+            return PrivilegeEscalate(hostname=hostname, agent=self.name, session=session)
 
         # access unexploited hosts
         for address in addresses:
@@ -72,7 +81,7 @@ class RedMeanderAgent(BaseAgent):
                 continue
             self.exploited_ips.append(address)
             self.last_ip = address
-            return ExploitRemoteService(ip_address=address, agent='Red', session=session)
+            return ExploitRemoteService(ip_address=address, agent=self.name, session=session)
 
         raise NotImplementedError('Red Meander has run out of options!')
 
@@ -117,6 +126,8 @@ class RedMeanderAgent(BaseAgent):
         self.host_ip_map = {}
         self.last_host = None
         self.last_ip = None
+        
+        self.steps = 0
 
     def set_initial_values(self, action_space, observation):
         pass

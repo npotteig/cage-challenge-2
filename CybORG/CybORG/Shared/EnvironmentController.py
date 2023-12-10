@@ -353,7 +353,6 @@ class EnvironmentController:
 
     def _create_agents(self, agent_classes: dict = None) -> dict:
         agents = {}
-
         for agent_name in self.scenario.agents:
             agent_info = self.scenario.get_agent_info(agent_name)
             if agent_classes is not None and agent_name in agent_classes:
