@@ -14,6 +14,7 @@ from CybORG.Agents.Wrappers.FixedFlatWrapper import FixedFlatWrapper
 from CybORG.Agents.Wrappers.OpenAIGymWrapper import OpenAIGymWrapper
 from CybORG.Agents.Wrappers.ReduceActionSpaceWrapper import ReduceActionSpaceWrapper
 from CybORG.Agents.Wrappers import ChallengeWrapper
+from CybORG.Agents.MainAgent import MainAgent
 
 MAX_EPS = 100
 agent_name = 'Blue'
@@ -40,7 +41,7 @@ if __name__ == "__main__":
     wrap_line = lines.split('\n')[1].split('return ')[1]
 
     # Change this line to load your agent
-    # agent = BlueLoadAgent()
+    agent = MainAgent()
 
     # print(f'Using agent {agent.__class__.__name__}, if this is incorrect please update the code to load in your agent')
 
@@ -53,6 +54,10 @@ if __name__ == "__main__":
 
     path = str(inspect.getfile(CybORG))
     path = path[:-10] + f'/Shared/Scenarios/{scenario}.yaml'
+
+    all_rewards = []
+    for i in range(100):
+        all_rewards.append([])
 
     print(f'using CybORG v{cyborg_version}, {scenario}\n')
     for num_steps in [100, 100, 100]:
@@ -74,11 +79,12 @@ if __name__ == "__main__":
             a = []
             # cyborg.env.env.tracker.render()
             for j in range(num_steps):
-                # action = agent.get_action(observation, action_space)
-                action = 0
+                action = agent.get_action(observation, action_space)
+                # action = 0
                 observation, rew, done, info = wrapped_cyborg.step(action)
                 # result = cyborg.step(agent_name, action)
                 r.append(rew)
+                all_rewards[j].append(rew)
                 # r.append(result.reward)
                 a.append((str(cyborg.get_last_action('Blue')), str(cyborg.get_last_action('Red'))))
             # agent.end_episode()
@@ -91,3 +97,14 @@ if __name__ == "__main__":
             #     data.write(f'steps: {num_steps}, adversary: {red_agent.__name__}, mean: {mean(total_reward)}, standard deviation {stdev(total_reward)}\n')
             #     for act, sum_rew in zip(actions, total_reward):
             #         data.write(f'actions: {act}, total reward: {sum_rew}\n')
+    
+    # Compute the average reward and st dev for each step
+    # Note: This is NOT cumulative
+    means = []
+    stdevs = []
+    for i in range(len(all_rewards)):
+        means.append(mean(all_rewards[i]))
+        stdevs.append(stdev(all_rewards[i]))
+
+    print(means)
+    print(stdevs)
