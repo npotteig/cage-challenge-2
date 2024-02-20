@@ -60,7 +60,7 @@ if __name__ == "__main__":
         all_rewards.append([])
 
     print(f'using CybORG v{cyborg_version}, {scenario}\n')
-    for num_steps in [100, 100, 100]:
+    for num_steps in [100]:
         # for red_agent in [B_lineAgent, RedMeanderAgent, SleepAgent]:
         red_agent = RedMeanderAgent
         red2 = B_lineAgent

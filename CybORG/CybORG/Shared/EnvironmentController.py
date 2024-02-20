@@ -30,7 +30,7 @@ class EnvironmentController:
         agent interface object for agents in scenario
     """
 
-    def __init__(self, scenario_path: str, scenario_mod: dict = None, agents: dict = None):
+    def __init__(self, scenario_path: str, scenario_mod: dict = None, agents: dict = None, strat_switch=None):
         """Instantiates the Environment Controller.
         Parameters
         ----------
@@ -47,7 +47,7 @@ class EnvironmentController:
         scenario_dict = self._parse_scenario(scenario_path)
         self.scenario = Scenario(scenario_dict)
         self._create_environment()
-        self.agent_interfaces = self._create_agents(agents)
+        self.agent_interfaces = self._create_agents(agents, strat_switch=strat_switch)
         self.reward = {}
         self.INFO_DICT = {}
         self.action = {}
@@ -351,7 +351,7 @@ class EnvironmentController:
             scenario_dict = yaml.load(fIn, Loader=yaml.FullLoader)
         return scenario_dict
 
-    def _create_agents(self, agent_classes: dict = None) -> dict:
+    def _create_agents(self, agent_classes: dict = None, strat_switch=None) -> dict:
         agents = {}
         for agent_name in self.scenario.agents:
             agent_info = self.scenario.get_agent_info(agent_name)
@@ -367,7 +367,8 @@ class EnvironmentController:
                 agent_info.reward_calculator_type,
                 allowed_subnets=agent_info.allowed_subnets,
                 wrappers=agent_info.wrappers,
-                scenario=self.scenario
+                scenario=self.scenario,
+                strat_switch=strat_switch
             )
         return agents
 

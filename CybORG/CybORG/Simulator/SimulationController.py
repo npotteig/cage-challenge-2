@@ -24,9 +24,9 @@ class SimulationController(EnvironmentController):
     Most methods are either disabled or delegate their functionality to the State attribute.
     The main thing this class currently does is parse the scenario file.
     """
-    def __init__(self, scenario_filepath: str = None, scenario_mod: dict = None, agents: dict = None, verbose=True):
+    def __init__(self, scenario_filepath: str = None, scenario_mod: dict = None, agents: dict = None, verbose=True, strat_switch=None):
         self.state = None
-        super().__init__(scenario_filepath, scenario_mod=scenario_mod, agents=agents)
+        super().__init__(scenario_filepath, scenario_mod=scenario_mod, agents=agents, strat_switch=strat_switch)
 
     def reset(self, agent=None):
         self.state.reset()

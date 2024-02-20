@@ -8,7 +8,7 @@ from CybORG.Shared.Actions import PrivilegeEscalate, ExploitRemoteService, Disco
 
 class RedMeanderAgent(BaseAgent):
     # a red agent that meanders through scenario 1b
-    def __init__(self, name='Red'):
+    def __init__(self, name='Red', strat_switch=None):
         self.scanned_subnets = []
         self.scanned_ips = []
         self.exploited_ips = []
@@ -16,6 +16,7 @@ class RedMeanderAgent(BaseAgent):
         self.host_ip_map = {}
         self.last_host = None
         self.last_ip = None
+        self.strat_switch = strat_switch
         
         self.name = name
         
@@ -28,7 +29,7 @@ class RedMeanderAgent(BaseAgent):
     def get_action(self, observation, action_space):
         """gets an action from the agent that should be performed based on the agent's internal state and provided observation and action space"""
         self.steps += 1
-        if self.steps >= 50:
+        if self.steps >= self.strat_switch.switch_step:
             return Sleep()
         
         

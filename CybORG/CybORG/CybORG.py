@@ -38,7 +38,8 @@ class CybORG (CybORGLogger):
                  scenario_file: str,
                  environment: str = "sim",
                  env_config=None,
-                 agents: dict = None):
+                 agents: dict = None,
+                 strat_switch=None):
         """Instantiates the CybORG class.
 
         Parameters
@@ -59,19 +60,19 @@ class CybORG (CybORGLogger):
         self.scenario_file = scenario_file
         self._log_info(f"Using scenario file {scenario_file}")
         self.environment_controller = self._create_env_controller(
-            env_config, agents
+            env_config, agents, strat_switch=strat_switch,
         )
 
     def _create_env_controller(self,
                                env_config,
-                               agents) -> EnvironmentController:
+                               agents, strat_switch=None) -> EnvironmentController:
         """Chooses which Environment Controller to use then instantiates it.
 
         Parameters
         ----------
         """
         if self.env == 'sim':
-            return SimulationController(self.scenario_file, agents=agents)
+            return SimulationController(self.scenario_file, agents=agents, strat_switch=strat_switch)
         if self.env == 'aws':
 
             if env_config:

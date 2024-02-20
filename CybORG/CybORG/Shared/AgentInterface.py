@@ -34,7 +34,7 @@ class AgentInterface:
                  reward_calculator_type,
                  allowed_subnets,
                  scenario,
-                 wrappers=None):
+                 wrappers=None, strat_switch=None):
         self.hostname = {}
         self.username = {}
         self.group_name = {}
@@ -54,7 +54,7 @@ class AgentInterface:
         self.agent_name = agent_name
         self.action_space = ActionSpace(self.actions, agent_name, allowed_subnets)
         if 'Red' in agent_name:
-            self.agent = agent_class(name=agent_name)
+            self.agent = agent_class(name=agent_name, strat_switch=strat_switch)
         else:
             self.agent = agent_class()
         if wrappers is not None:

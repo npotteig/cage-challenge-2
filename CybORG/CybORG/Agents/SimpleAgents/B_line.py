@@ -9,13 +9,14 @@ from pprint import pprint
 
 
 class B_lineAgent(BaseAgent):
-    def __init__(self, name='Red'):
+    def __init__(self, name='Red', strat_switch=None):
         self.action = 0
         self.target_ip_address = None
         self.last_subnet = None
         self.last_ip_address = None
         self.action_history = {}
         self.jumps = [0,1,2,2,2,2,5,5,5,5,9,9,9,12,13]
+        self.strat_switch = strat_switch
         
         self.name = name
         self.steps = 0
@@ -32,7 +33,7 @@ class B_lineAgent(BaseAgent):
             self.init_obs = observation
         
         self.steps += 1
-        if self.steps < 50:
+        if self.steps < self.strat_switch.switch_step:
             return Sleep()
 
         while True:
