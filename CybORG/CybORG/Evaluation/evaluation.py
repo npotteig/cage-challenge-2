@@ -2,6 +2,7 @@ import subprocess
 import inspect
 import time
 from statistics import mean, stdev
+import matplotlib.pyplot as plt
 
 from CybORG import CybORG, CYBORG_VERSION
 from CybORG.Agents import B_lineAgent, SleepAgent
@@ -106,5 +107,17 @@ if __name__ == "__main__":
         means.append(mean(all_rewards[i]))
         stdevs.append(stdev(all_rewards[i]))
 
-    print(means)
-    print(stdevs)
+    cum_means = [means[0]]
+    for i in range(1, len(means)):
+        cum_means.append(cum_means[i - 1] + means[i])
+
+    print("Average reward per step: ", means)
+    print("Cumulative average reward: ", cum_means)
+    print("Standard deviation per step: ", stdevs)
+
+    xs = [x for x in range(len(cum_means))]
+    plt.plot(xs, cum_means)
+    plt.xlabel("Time step")
+    plt.ylabel("Cumulative average reward")
+    plt.show()
+    plt.close()
